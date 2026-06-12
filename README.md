@@ -1,5 +1,7 @@
 # Yapper
 
+<p align="center"><img src="assets/yapper_hero.svg" alt="Yapper" /></p>
+
 Push-to-talk local transcription daemon for macOS. Hold a hotkey, speak,
 release — transcription is pasted at the cursor. Fully local via
 whisper.cpp, nothing leaves the machine.
