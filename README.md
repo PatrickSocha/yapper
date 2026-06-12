@@ -1,4 +1,4 @@
-# Yapper (Go)
+# Yapper
 
 Push-to-talk local transcription daemon for macOS. Hold a hotkey, speak,
 release — transcription is pasted at the cursor. Fully local via
@@ -122,6 +122,10 @@ launchctl unload ~/Library/LaunchAgents/com.yapper.ptt.plist
 | [vcaesar/keycode](https://github.com/vcaesar/keycode) | go-vgo Project Developers | Apache 2.0 |
 
 License texts are included in their respective source directories. A copy of the Apache 2.0 license can be found at `go/pkg/mod/github.com/vcaesar/keycode*/LICENSE` in your Go module cache, or at https://www.apache.org/licenses/LICENSE-2.0.
+
+## Inspiration
+
+[LocalFlow](https://github.com/vmysla/LocalFlow) — a similar push-to-talk transcription tool that inspired this project.
 
 ## License
 
