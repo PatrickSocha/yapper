@@ -1,8 +1,6 @@
 <p align="center"><img src="assets/yapper_hero.svg" alt="Yapper" /></p>
 
-Push-to-talk local transcription daemon for macOS. Hold a hotkey, speak,
-release — transcription is pasted at the cursor. Fully local via
-whisper.cpp, nothing leaves the machine.
+Push-to-talk local transcription daemon for macOS. Hold a hotkey, speak, and release to paste the transcription at the cursor. Fully local via whisper.cpp - no audio or data leaves the machine.
 
 ## Install
 
@@ -21,7 +19,7 @@ bash install.sh uninstall
 ## Requirements (manual build)
 
 - macOS, Go 1.23+
-- Xcode command line tools (`xcode-select --install`) — needed to build whisper.cpp
+- Xcode command line tools (`xcode-select --install`) - needed to build whisper.cpp
 - CMake: `brew install cmake`
 - PortAudio: `brew install portaudio`
 - pkg-config: `brew install pkgconf`
@@ -83,14 +81,12 @@ go build -o yapper .
 
 First run will trigger macOS permission prompts:
 
-- **Microphone** — to capture audio
-- **Accessibility** — to listen for the global hotkey and send Cmd+V
+- **Microphone** - to capture audio
+- **Accessibility** - to listen for the global hotkey and send Cmd+V
 
-Grant both to whatever binary/terminal is running `yapper`, then quit
-and relaunch.
+Grant both to whatever binary/terminal is running `yapper`, then quit and relaunch.
 
-Hold Right Option, speak, release. The transcription is pasted at the
-cursor and your previous clipboard contents are restored shortly after.
+Hold Right Option, speak, then release. The transcription is pasted at the cursor and your previous clipboard contents are restored shortly after.
 
 ## 5. Run as a background daemon (optional)
 
@@ -120,11 +116,11 @@ launchctl unload ~/Library/LaunchAgents/com.yapper.ptt.plist
 
 ## Configuration
 
-- `-model` — path to a ggml `.bin` model file
-- `-hotkey` — `rightoption`, `leftoption`, or `f19`. To add other keys,
+- `-model` - path to a ggml `.bin` model file
+- `-hotkey` - `rightoption`, `leftoption`, or `f19`. To add other keys,
   extend the `codes` map in `keyEventCode` in `main.go` with the
   appropriate gohook rawcode for that key.
-- `-log-text` — log each transcription to stdout (disabled by default for privacy)
+- `-log-text` - log each transcription to stdout (disabled by default for privacy)
 
 ## Third-party components
 
@@ -142,8 +138,8 @@ License texts are included in their respective source directories.
 
 ## Inspiration
 
-[LocalFlow](https://github.com/vmysla/LocalFlow) — a similar push-to-talk transcription tool that inspired this project.
+[LocalFlow](https://github.com/vmysla/LocalFlow) - a similar push-to-talk transcription tool that inspired this project.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
