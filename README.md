@@ -4,7 +4,21 @@ Push-to-talk local transcription daemon for macOS. Hold a hotkey, speak,
 release — transcription is pasted at the cursor. Fully local via
 whisper.cpp, nothing leaves the machine.
 
-## Requirements
+## Install
+
+```bash
+./install.sh
+```
+
+The script installs dependencies (portaudio via Homebrew), builds whisper.cpp and the yapper binary, downloads a model, and optionally installs yapper as a launchd daemon that starts on login.
+
+To uninstall:
+
+```bash
+bash install.sh uninstall
+```
+
+## Requirements (manual build)
 
 - macOS, Go 1.22+
 - Xcode command line tools (`xcode-select --install`) — needed to build whisper.cpp
@@ -121,7 +135,9 @@ launchctl unload ~/Library/LaunchAgents/com.yapper.ptt.plist
 | [robotn/gohook](https://github.com/robotn/gohook) | go-ego Project Developers | MIT |
 | [vcaesar/keycode](https://github.com/vcaesar/keycode) | go-vgo Project Developers | Apache 2.0 |
 
-License texts are included in their respective source directories. A copy of the Apache 2.0 license can be found at `go/pkg/mod/github.com/vcaesar/keycode*/LICENSE` in your Go module cache, or at https://www.apache.org/licenses/LICENSE-2.0.
+Built with assistance from [Claude](https://claude.ai) by Anthropic.
+
+License texts are included in their respective source directories.
 
 ## Inspiration
 
