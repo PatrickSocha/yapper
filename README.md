@@ -16,9 +16,12 @@ To uninstall:
 bash install.sh uninstall
 ```
 
-## Requirements (manual build)
+## Manual installation
+
+### Requirements
 
 - macOS, Go 1.23+
+- Git
 - Xcode command line tools (`xcode-select --install`) - needed to build whisper.cpp
 - CMake: `brew install cmake`
 - PortAudio: `brew install portaudio`
@@ -26,7 +29,11 @@ bash install.sh uninstall
 
 ## 1. Build whisper.cpp
 
-whisper.cpp is included as a subdirectory. Build it as static libraries with CMake:
+Clone whisper.cpp into this directory, then build it as static libraries with CMake:
+
+```bash
+git clone https://github.com/ggerganov/whisper.cpp
+```
 
 ```bash
 cmake -S whisper.cpp -B whisper.cpp/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
@@ -43,8 +50,6 @@ This downloads `whisper.cpp/models/ggml-base.en.bin` (~140MB). Larger models
 (`small.en`, `medium.en`) are more accurate but slower.
 
 ## 3. Build Yapper
-
-From this directory:
 
 The build links whisper and portaudio statically, so the resulting binary has no third-party dylib dependencies.
 
@@ -138,7 +143,7 @@ License texts are included in their respective source directories.
 
 ## Inspiration
 
-[LocalFlow](https://github.com/vmysla/LocalFlow) - a similar push-to-talk transcription tool that inspired this project.
+[LocalFlow](https://github.com/vmysla/LocalFlow) - push-to-talk transcription tool that fully inspired this Go re-write.
 
 ## License
 

@@ -48,7 +48,7 @@ func (r *recorder) start() error {
 	if r.active {
 		return nil
 	}
-	r.samples = r.samples[:0]
+	r.samples = nil
 	r.startTime = time.Now()
 	buf := make([]float32, frameSize)
 	stream, err := portaudio.OpenDefaultStream(1, 0, float64(sampleRate), len(buf), func(in []float32) {
@@ -60,6 +60,7 @@ func (r *recorder) start() error {
 		return err
 	}
 	if err := stream.Start(); err != nil {
+		stream.Close()
 		return err
 	}
 	r.stream = stream
@@ -91,8 +92,14 @@ func (r *recorder) stop() []float32 {
 	return out
 }
 
+// transcribeMu serialises calls to transcribe: the underlying C whisper
+// context is not safe for concurrent use.
+var transcribeMu sync.Mutex
+
 // transcribe runs the buffered audio through whisper.cpp in-process.
 func transcribe(model whisper.Model, samples []float32) (string, error) {
+	transcribeMu.Lock()
+	defer transcribeMu.Unlock()
 	ctx, err := model.NewContext()
 	if err != nil {
 		return "", err
