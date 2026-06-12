@@ -5,9 +5,16 @@
 // at the cursor via clipboard + Cmd+V. Fully local, whisper.cpp based.
 package main
 
+/*
+#cgo LDFLAGS: -framework ApplicationServices
+#include <ApplicationServices/ApplicationServices.h>
+*/
+import "C"
+
 import (
 	"flag"
 	"log"
+	"os"
 	"os/exec"
 	"sync"
 	"time"
@@ -187,8 +194,26 @@ type unknownKeyError struct{}
 
 func (e *unknownKeyError) Error() string { return "unknown hotkey name" }
 
+// requireAccessibility exits if macOS accessibility permission has not been
+// granted. When running as a launchd daemon, exiting causes launchd to restart
+// the process; on the next start (after the user grants permission) the check
+// passes and the event tap registers successfully. The sleep prevents launchd
+// from throttling restarts due to rapid exits.
+func requireAccessibility() {
+	if C.AXIsProcessTrusted() != 0 {
+		return
+	}
+	log.Println("yapper: accessibility permission not granted")
+	log.Println("  Go to: System Settings > Privacy & Security > Accessibility")
+	log.Println("  Add yapper, then the daemon will restart automatically.")
+	time.Sleep(15 * time.Second)
+	os.Exit(1)
+}
+
 func main() {
 	flag.Parse()
+
+	requireAccessibility()
 
 	if err := portaudio.Initialize(); err != nil {
 		log.Fatalf("portaudio init: %v", err)

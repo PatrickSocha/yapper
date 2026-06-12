@@ -130,20 +130,29 @@ echo
 
 read -rp "Install as a background daemon (launchd)? [y/N] " ans
 if [[ "$ans" =~ ^[Yy]$ ]]; then
-  echo "==> Installing binary to $BIN_DEST (requires sudo)"
-  sudo cp "$WORKDIR/yapper" "$BIN_DEST"
-
-  echo "==> Installing model to $MODEL_DEST (requires sudo)"
-  sudo mkdir -p "$(dirname "$MODEL_DEST")"
-  sudo cp "$MODEL_FILE" "$MODEL_DEST"
-
   PLIST_SRC="$WORKDIR/com.yapper.ptt.plist"
 
-  read -rp "Log transcribed text to /tmp/yapper.log? (not recommended for privacy) [y/N] " log_ans
   LOG_TEXT_FLAG=""
-  if [[ "$log_ans" =~ ^[Yy]$ ]]; then
-    LOG_TEXT_FLAG="<string>-log-text</string>"
+
+  echo
+  echo "==> The following system changes will be made:"
+  echo "    Copy binary  : $BIN_DEST  (requires sudo)"
+  echo "    Copy model   : $MODEL_DEST  (requires sudo)"
+  echo "    Write plist  : $PLIST_DEST"
+  echo "    Load daemon  : launchctl load $PLIST_DEST"
+  echo
+  read -rp "Proceed? [y/N] " confirm
+  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 0
   fi
+
+  echo "==> Installing binary to $BIN_DEST"
+  sudo cp "$WORKDIR/yapper" "$BIN_DEST"
+
+  echo "==> Installing model to $MODEL_DEST"
+  sudo mkdir -p "$(dirname "$MODEL_DEST")"
+  sudo cp "$MODEL_FILE" "$MODEL_DEST"
 
   echo "==> Writing $PLIST_DEST"
   mkdir -p "$(dirname "$PLIST_DEST")"
@@ -151,7 +160,6 @@ if [[ "$ans" =~ ^[Yy]$ ]]; then
     -e "s#/usr/local/bin/yapper#${BIN_DEST}#g" \
     -e "s#/usr/local/share/yapper/ggml-base.en.bin#${MODEL_DEST}#g" \
     -e "s#rightoption#${HOTKEY}#g" \
-    -e "s#<string>-hotkey=${HOTKEY}</string>#<string>-hotkey=${HOTKEY}</string>${LOG_TEXT_FLAG}#g" \
     "$PLIST_SRC" > "$PLIST_DEST"
 
   echo "==> Loading launchd agent"
@@ -159,15 +167,38 @@ if [[ "$ans" =~ ^[Yy]$ ]]; then
   launchctl load "$PLIST_DEST"
 
   echo
-  echo "Installed and running. Logs: /tmp/yapper.log, /tmp/yapper.err"
+  echo "Installed. Logs: /tmp/yapper.log, /tmp/yapper.err"
   echo "To stop: launchctl unload $PLIST_DEST"
+  echo
+  echo "==> macOS permissions required"
+  echo "    Yapper needs Microphone and Accessibility access to work."
+  echo "    Opening System Settings now..."
+  echo
+  open "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone" 2>/dev/null || true
+  sleep 1
+  open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility" 2>/dev/null || true
+  echo "    Add yapper ($BIN_DEST) to both lists, then come back here."
+  echo "    Note: if you have reinstalled, you must click the – button to fully remove"
+  echo "    the old yapper entry, then re-add it with +. Toggling the switch off and"
+  echo "    on is not enough — macOS ties the permission to the binary hash, which"
+  echo "    changes on each build."
+  echo
+  read -rp "Have you granted both Microphone and Accessibility permissions? [y/N] " perms_ans
+  if [[ "$perms_ans" =~ ^[Yy]$ ]]; then
+    echo "==> Restarting daemon to pick up new permissions"
+    launchctl unload "$PLIST_DEST" 2>/dev/null || true
+    launchctl load "$PLIST_DEST"
+    echo "Done. Yapper is running — hold $HOTKEY to record."
+  else
+    echo "Run this when ready to restart:"
+    echo "  launchctl unload $PLIST_DEST && launchctl load $PLIST_DEST"
+  fi
 else
   echo
   echo "Run manually with:"
   echo "  ./yapper -model=$MODEL_FILE -hotkey=$HOTKEY"
+  echo
+  echo "==> macOS permissions required on first run:"
+  echo "    System Settings > Privacy & Security > Microphone  — add your terminal"
+  echo "    System Settings > Privacy & Security > Accessibility — add your terminal"
 fi
-
-echo
-echo "==> First run requires macOS permissions:"
-echo "    System Settings -> Privacy & Security -> Microphone (add your terminal/binary)"
-echo "    System Settings -> Privacy & Security -> Accessibility (add your terminal/binary)"
