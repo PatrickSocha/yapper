@@ -10,7 +10,7 @@ whisper.cpp, nothing leaves the machine.
 ./install.sh
 ```
 
-The script installs dependencies (portaudio via Homebrew), builds whisper.cpp and the yapper binary, downloads a model, and optionally installs yapper as a launchd daemon that starts on login.
+The script installs dependencies (cmake, portaudio via Homebrew), builds whisper.cpp and the yapper binary, downloads a model, and optionally installs yapper as a launchd daemon that starts on login.
 
 To uninstall:
 
@@ -20,7 +20,7 @@ bash install.sh uninstall
 
 ## Requirements (manual build)
 
-- macOS, Go 1.22+
+- macOS, Go 1.23+
 - Xcode command line tools (`xcode-select --install`) — needed to build whisper.cpp
 - CMake: `brew install cmake`
 - PortAudio: `brew install portaudio`
@@ -124,6 +124,7 @@ launchctl unload ~/Library/LaunchAgents/com.yapper.ptt.plist
 - `-hotkey` — `rightoption`, `leftoption`, or `f19`. To add other keys,
   extend the `codes` map in `keyEventCode` in `main.go` with the
   appropriate gohook rawcode for that key.
+- `-log-text` — log each transcription to stdout (disabled by default for privacy)
 
 ## Third-party components
 

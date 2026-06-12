@@ -78,6 +78,11 @@ if ! command -v pkg-config >/dev/null 2>&1; then
   brew install pkgconf
 fi
 
+if ! command -v cmake >/dev/null 2>&1; then
+  echo "==> Installing cmake"
+  brew install cmake
+fi
+
 echo "==> Fetching whisper.cpp"
 if [ ! -d "$WHISPER_DIR" ]; then
   git clone https://github.com/ggerganov/whisper.cpp "$WHISPER_DIR"
